@@ -35,7 +35,7 @@ def DownloadPlaylist(link, path):
         # Get video stream info from url
         yt = YouTube(url)
         # Locate file by name
-        result = FindFiles(yt.title + ".mp4", path)
+        result = FindFiles(SanitizeFilename(yt.title) + ".mp4", path)
         # If file found continue
         if result:
             # Update progress
