@@ -6,6 +6,11 @@ from tkinter import *
 from tkinter import filedialog
 import re
 
+def SanitizeFilename(filename):
+    # Remove special characters (except alphanumeric, hyphen, and underscore)
+    sanitized = re.sub(r'[^\w-]', '', filename)
+    return sanitized
+
 def IsValidYoutubePlaylist(url):
     regex = r'^(?:https?://)?(?:www\.)?(?:youtube\.com/playlist\?list=|youtu\.be/)([a-zA-Z0-9_-]+)'
     return re.match(regex, url) is not None
@@ -20,8 +25,6 @@ def DownloadPlaylist(link, path):
     # Playlist object
     pl = Playlist(link)
 
-    #tester_link = "https://www.youtube.com/playlist?list=PLLFlzOqze584A8Re6o5fNG5sBH73gWREn"
-
     # Intial value for variable to count item # being downloaded
     n = 1
     # Initial value for counting items not downloaded
@@ -31,7 +34,6 @@ def DownloadPlaylist(link, path):
     for url in pl.video_urls:
         # Get video stream info from url
         yt = YouTube(url)
-
         # Locate file by name
         result = FindFiles(yt.title + ".mp4", path)
         # If file found continue
@@ -52,7 +54,7 @@ def DownloadPlaylist(link, path):
             # Collect audio only
             yd = yt.streams.get_audio_only()
             # Download the audio file and name it as the video title
-            yd.download(path, filename = yt.title + ".mp4")
+            yd.download(path, filename = SanitizeFilename(yt.title) + ".mp4")
 
             # Update progress
             percentage = round(n*100/pl.length)
